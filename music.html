@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Personal Playlist</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Thêm Font Awesome để dùng icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+<div class="container">
+    <div class="card">
+        <!-- Ảnh đại diện neon -->
+        <div class="profile-img">
+            <img src="images/wallpaper.jpg" alt="Avatar">
+        </div>
+
+        <h1 class="name">Tamono Damiante</h1>
+        <p class="bio">One sided love • Double bladed dagger</p>
+
+        <div class="status-badge">
+            <span class="dot"></span> IDLE
+        </div>
+
+        <p class="greeting"><i>Personal Favourites</i></p>
+
+        <!-- Thanh trượt trang trí -->
+        <div class="slider-container">
+            <div class="volume-header">
+                <span>Volume</span>
+                <!-- Đây là nơi số sẽ nhảy -->
+                <span id="volume-value">30%</span>
+            </div>
+            <!-- ID 'volume-slider' phải trùng với ID trong JavaScript -->
+            <input type="range" min="0" max="100" value="30" class="main-slider" id="volume-slider">
+        </div>
+
+        <!-- Các nút mạng xã hội -->
+        <div class="social-links">
+            <a href="https://www.facebook.com/phuthai.nguyen.395?locale=vi_VN" class="btn">Facebook</a>
+            <a href="https://discord.gg/XyGKyvRMp" class="btn">Discord Server</a>
+        </div>
+
+        <!-- Music Player Mini -->
+        <div class="music-player">
+            <img src="" alt="Song Cover" class="song-img"> <!-- Ảnh sẽ tự đổi -->
+            <div class="song-info">
+                <p class="song-title">Đang tải...</p> <!-- Tiêu đề sẽ tự đổi -->
+                <p class="song-artist" style="font-size: 10px; color: #00ffff; opacity: 0.7;">Ca sĩ</p> <!-- Thêm dòng này nếu muốn hiện tên ca sĩ -->
+                <div class="progress-bar">
+                    <span id="current-time">0:00</span>
+                    <!-- Đổi thanh bar cũ thành input range -->
+                    <input type="range" min="0" max="100" value="0" class="seek-slider" id="seek-slider">
+                    <span id="duration-time">0:00</span>
+                </div>
+            </div>
+            <div class="controls">
+                <i class="fas fa-step-backward"></i>
+                <i class="fas fa-play"></i>
+                <i class="fas fa-step-forward"></i>
+                <i class="fas fa-redo"></i>
+            </div>
+        </div>
+    </div>
+</div>
+<audio id="main-audio" src=""></audio>
+<script src="script.js"></script>
+</body>
+</html>
