@@ -169,3 +169,41 @@ document.addEventListener('DOMContentLoaded', () => {
     loadSong(playlist[currentIndex]);
     updateSliderBackground(volumeSlider, volumeSlider.value);
 });
+
+// Đợi trang load xong (Bỏ đoạn này nếu bạn viết chung vào nút DOMContentLoaded có sẵn)
+document.addEventListener('DOMContentLoaded', () => {
+    const toggleBtn = document.getElementById('playlist-toggle-btn');
+    const dropdown = document.getElementById('playlist-dropdown');
+    const songItems = document.querySelectorAll('.song-item');
+
+    // 1. Logic đóng/mở Dropdown khi bấm nút
+    toggleBtn.addEventListener('click', (e) => {
+        dropdown.classList.toggle('show');
+        e.stopPropagation(); // Ngăn sự kiện nổi bọt
+    </script>
+
+    // 2. Tự động đóng dropdown nếu bấm trượt ra ngoài thanh menu
+    document.addEventListener('click', (e) => {
+        if (!dropdown.contains(e.target) && e.target !== toggleBtn) {
+            dropdown.classList.remove('show');
+        }
+    });
+
+    // 3. Logic khi chọn bài hát trong danh sách
+    songItems.forEach(item => {
+        item.addEventListener('click', () => {
+            // Xóa active cũ, thêm active mới
+            document.querySelector('.song-item.active')?.classList.remove('active');
+            item.classList.add('active');
+            
+            // Lấy index của bài hát để chạy bài tương ứng
+            const songIndex = item.getAttribute('data-index');
+            console.log("Chuyển sang bài index:", songIndex);
+            
+            // Ở đây bạn gọi hàm chuyển bài có sẵn của bạn (Ví dụ: loadSong(songIndex) rồi playSong())
+            
+            // Đóng danh sách sau khi chọn xong bài trên mobile cho đỡ vướng
+            dropdown.classList.remove('show');
+        });
+    });
+});
