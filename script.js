@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentIndex = 0;
     let isPlaying = false;
-    let isRepeat = false; // Trạng thái lặp lại
+    let isRepeat = false;
 
     // 2. Truy vấn các phần tử giao diện
     const audio = document.getElementById('main-audio');
@@ -41,16 +41,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const volumeSlider = document.getElementById('volume-slider');
     const volumeValue = document.getElementById('volume-value');
 
-    const seekSlider = document.getElementById('seek-slider'); // Thanh tua nhạc
+    const seekSlider = document.getElementById('seek-slider');
     const currentTimeMsg = document.getElementById('current-time');
     const durationTimeMsg = document.getElementById('duration-time');
 
     const songTitle = document.querySelector('.song-title');
     const songArtist = document.querySelector('.song-artist');
     const songImg = document.querySelector('.song-img');
-    const mainAvatar = document.querySelector('.profile-img img');
 
-    // 3. Định dạng thời gian (Giây -> Phút:Giây)
+    // Các phần tử Dropdown Playlist
+    const toggleBtn = document.getElementById('playlist-toggle-btn');
+    const dropdown = document.getElementById('playlist-dropdown');
+    const songItems = document.querySelectorAll('.song-item');
+
+    // 3. Định dạng thời gian
     function formatTime(seconds) {
         let min = Math.floor(seconds / 60);
         let sec = Math.floor(seconds % 60);
@@ -58,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${min}:${sec}`;
     }
 
-    // 4. Cập nhật trạng thái hiển thị (Xoay ảnh & Icon Play)
+    // 4. Cập nhật trạng thái hiển thị
     function updateVisualStatus(playing) {
         if (playing) {
             playBtn.classList.replace('fa-play', 'fa-pause');
@@ -69,16 +73,27 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 5. Hàm tải thông tin bài hát lên giao diện
-    function loadSong(song) {
+    // 5. Hàm tải thông tin bài hát và đồng bộ class Active trong danh sách xổ xuống
+    function loadSong(index) {
+        currentIndex = index;
+        const song = playlist[currentIndex];
+        
         if (songTitle) songTitle.textContent = song.title;
         if (songArtist) songArtist.textContent = song.artist;
         if (songImg) songImg.src = song.cover;
         audio.src = song.src;
 
-        // Reset thanh seek khi đổi bài
         seekSlider.value = 0;
         currentTimeMsg.textContent = "0:00";
+
+        // Đồng bộ class 'active' trong danh sách chữ
+        songItems.forEach((item, idx) => {
+            if (idx === currentIndex) {
+                item.classList.add('active');
+            } else {
+                item.classList.remove('active');
+            }
+        });
     }
 
     // 6. Hàm xử lý Phát/Tạm dừng
@@ -95,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 7. Hàm chuyển bài tiếp theo
     function nextSong() {
         currentIndex = (currentIndex + 1) % playlist.length;
-        loadSong(playlist[currentIndex]);
+        loadSong(currentIndex);
         if (isPlaying) audio.play();
         else updateVisualStatus(false);
     }
@@ -103,31 +118,28 @@ document.addEventListener('DOMContentLoaded', () => {
     // 8. Hàm quay lại bài trước
     function prevSong() {
         currentIndex = (currentIndex - 1 + playlist.length) % playlist.length;
-        loadSong(playlist[currentIndex]);
+        loadSong(currentIndex);
         if (isPlaying) audio.play();
         else updateVisualStatus(false);
     }
 
-    // 9. Cập nhật giao diện Slider (Dải màu Cyan)
+    // 9. Cập nhật giao diện Slider
     function updateSliderBackground(slider, value) {
         const percent = (value - slider.min) / (slider.max - slider.min) * 100;
         slider.style.background = `linear-gradient(to right, #00ffff ${percent}%, #222 ${percent}%)`;
     }
 
-    // --- GẮN SỰ KIỆN ---
-
+    // --- GẮN SỰ KIỆN ĐIỀU KHIỂN ---
     playBtn.addEventListener('click', togglePlay);
     nextBtn.addEventListener('click', nextSong);
     prevBtn.addEventListener('click', prevSong);
 
-    // Nút lặp lại bài hát
     repeatBtn.addEventListener('click', () => {
         isRepeat = !isRepeat;
         repeatBtn.style.color = isRepeat ? "#00ffff" : "#ccc";
         repeatBtn.style.textShadow = isRepeat ? "0 0 10px #00ffff" : "none";
     });
 
-    // Xử lý Âm lượng
     volumeSlider.addEventListener('input', () => {
         const value = volumeSlider.value;
         audio.volume = value / 100;
@@ -135,27 +147,22 @@ document.addEventListener('DOMContentLoaded', () => {
         updateSliderBackground(volumeSlider, value);
     });
 
-    // Cập nhật thanh tiến trình và thời gian khi nhạc chạy
     audio.addEventListener('timeupdate', () => {
         if (audio.duration) {
             const currentPos = (audio.currentTime / audio.duration) * 100;
             seekSlider.value = currentPos;
-
             currentTimeMsg.textContent = formatTime(audio.currentTime);
             durationTimeMsg.textContent = formatTime(audio.duration);
-
             updateSliderBackground(seekSlider, currentPos);
         }
     });
 
-    // Khi người dùng tua nhạc qua thanh Seekbar
     seekSlider.addEventListener('input', () => {
         const seekTo = audio.duration * (seekSlider.value / 100);
         audio.currentTime = seekTo;
         updateSliderBackground(seekSlider, seekSlider.value);
     });
 
-    // Tự động chuyển bài hoặc lặp lại khi kết thúc
     audio.addEventListener('ended', () => {
         if (isRepeat) {
             audio.currentTime = 0;
@@ -165,45 +172,33 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- KHỞI TẠO BAN ĐẦU ---
-    loadSong(playlist[currentIndex]);
-    updateSliderBackground(volumeSlider, volumeSlider.value);
-});
-
-// Đợi trang load xong (Bỏ đoạn này nếu bạn viết chung vào nút DOMContentLoaded có sẵn)
-document.addEventListener('DOMContentLoaded', () => {
-    const toggleBtn = document.getElementById('playlist-toggle-btn');
-    const dropdown = document.getElementById('playlist-dropdown');
-    const songItems = document.querySelectorAll('.song-item');
-
-    // 1. Logic đóng/mở Dropdown khi bấm nút
+    // --- LOGIC XỬ LÝ DROPDOWN PLAYLIST ---
     toggleBtn.addEventListener('click', (e) => {
         dropdown.classList.toggle('show');
-        e.stopPropagation(); // Ngăn sự kiện nổi bọt
-    </script>
+        e.stopPropagation();
+    });
 
-    // 2. Tự động đóng dropdown nếu bấm trượt ra ngoài thanh menu
     document.addEventListener('click', (e) => {
         if (!dropdown.contains(e.target) && e.target !== toggleBtn) {
             dropdown.classList.remove('show');
         }
     });
 
-    // 3. Logic khi chọn bài hát trong danh sách
     songItems.forEach(item => {
         item.addEventListener('click', () => {
-            // Xóa active cũ, thêm active mới
-            document.querySelector('.song-item.active')?.classList.remove('active');
-            item.classList.add('active');
+            const songIndex = parseInt(item.getAttribute('data-index'));
+            loadSong(songIndex);
             
-            // Lấy index của bài hát để chạy bài tương ứng
-            const songIndex = item.getAttribute('data-index');
-            console.log("Chuyển sang bài index:", songIndex);
+            // Tự động phát khi chọn từ danh sách
+            isPlaying = true;
+            audio.play();
+            updateVisualStatus(true);
             
-            // Ở đây bạn gọi hàm chuyển bài có sẵn của bạn (Ví dụ: loadSong(songIndex) rồi playSong())
-            
-            // Đóng danh sách sau khi chọn xong bài trên mobile cho đỡ vướng
             dropdown.classList.remove('show');
         });
     });
+
+    // --- KHỞI TẠO BAN ĐẦU ---
+    loadSong(currentIndex);
+    updateSliderBackground(volumeSlider, volumeSlider.value);
 });
