@@ -20,10 +20,10 @@ document.addEventListener('DOMContentLoaded', () => {
             src: "music/ForgottenPromises.mp3"
         },
         {
-            title: "Những Lời Hứa Bỏ Quên",
-            artist: "Vũ. x Dear Jane",
-            cover: "images/VuThumbnail.png",
-            src: "music/ForgottenPromises.mp3"
+            title: "THÁNG NĂM",
+            artist: "Soobin",
+            cover: "images/soobinthumbnail.png",
+            src: "music/ThangNam.mp3"
         }
     ];
 
