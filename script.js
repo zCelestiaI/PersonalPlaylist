@@ -18,6 +18,12 @@ document.addEventListener('DOMContentLoaded', () => {
             artist: "Vũ. x Dear Jane",
             cover: "images/VuThumbnail.png",
             src: "music/ForgottenPromises.mp3"
+        },
+        {
+            title: "Những Lời Hứa Bỏ Quên",
+            artist: "Vũ. x Dear Jane",
+            cover: "images/VuThumbnail.png",
+            src: "music/ForgottenPromises.mp3"
         }
     ];
 
